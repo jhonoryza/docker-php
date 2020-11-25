@@ -34,3 +34,10 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update -q \
     sockets \
     pdo_sqlsrv \
     sqlsrv
+
+# Install composer
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
+    && php -r "copy('https://composer.github.io/installer.sig', 'signature');" \
+    && php -r "if (hash_file('SHA384', 'composer-setup.php') === trim(file_get_contents('signature'))) { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" \
+    && php composer-setup.php --version=1.10.17 --install-dir=/usr/local/bin --filename=composer \
+    && php -r "unlink('composer-setup.php');"
