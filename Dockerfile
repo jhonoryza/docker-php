@@ -1,14 +1,6 @@
 FROM php:7.4-fpm
 
 ADD ./www.conf /usr/local/etc/php-fpm.d/www.conf
-COPY ./php.ini /usr/local/etc/php/php.ini
-
-RUN groupadd -g 1000 laravel 
-RUN useradd -ms /bin/bash -G laravel -g 1000 laravel 
-RUN mkdir -p /var/www/html \
-    && chown laravel:laravel /var/www/html
-
-WORKDIR /var/www/html
 
 # Download script to install PHP extensions and dependencies
 ADD https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/master/install-php-extensions /usr/local/bin/
@@ -49,3 +41,12 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php -r "if (hash_file('SHA384', 'composer-setup.php') === trim(file_get_contents('signature'))) { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" \
     && php composer-setup.php --version=1.10.17 --install-dir=/usr/local/bin --filename=composer \
     && php -r "unlink('composer-setup.php');"
+
+COPY ./php.ini /usr/local/etc/php/php.ini
+
+RUN groupadd -g 1000 laravel 
+RUN useradd -ms /bin/bash -G laravel -g 1000 laravel 
+RUN mkdir -p /var/www/html \
+    && chown laravel:laravel /var/www/html
+
+WORKDIR /var/www/html
