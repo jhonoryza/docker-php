@@ -2,6 +2,14 @@ FROM php:7.2-fpm-alpine
 
 ADD ./www.conf /usr/local/etc/php-fpm.d/www.conf
 
+RUN addgroup -g 1000 laravel && adduser -G laravel -g laravel -s /bin/sh -D laravel
+
+RUN mkdir -p /var/www/html
+
+RUN chown laravel:laravel /var/www/html
+
+WORKDIR /var/www/html
+
 ADD https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/master/install-php-extensions /usr/local/bin/
 
 RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
