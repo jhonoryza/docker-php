@@ -1,6 +1,14 @@
 FROM php:7.1-fpm
 
 ADD ./www.conf /usr/local/etc/php-fpm.d/www.conf
+COPY ./php.ini /usr/local/etc/php/php.ini
+
+RUN groupadd -g 1000 laravel 
+RUN useradd -ms /bin/bash -G laravel -g 1000 laravel 
+RUN mkdir -p /var/www/html \
+    && chown laravel:laravel /var/www/html
+
+WORKDIR /var/www/html
 
 # Download script to install PHP extensions and dependencies
 ADD https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/master/install-php-extensions /usr/local/bin/
