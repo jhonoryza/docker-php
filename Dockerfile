@@ -32,7 +32,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update -q \
     xsl \
     zip \
     sockets \
-    pdo_sqlsrv \
     sqlsrv
 
 # Install composer
