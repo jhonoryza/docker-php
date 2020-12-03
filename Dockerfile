@@ -17,7 +17,7 @@ RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
     # imagick \
     pcntl \
     mbstring \
-    mcrypt \
+    # mcrypt \
     memcached \
     opcache \
     pdo \
