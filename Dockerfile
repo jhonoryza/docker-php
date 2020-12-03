@@ -18,7 +18,7 @@ RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
     pcntl \
     mbstring \
     # mcrypt \
-    memcached \
+    # memcached \
     opcache \
     pdo \
     pdo_mysql \
