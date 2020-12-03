@@ -14,7 +14,7 @@ RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
     curl \
     exif \
     gd \
-    imagick \
+    # imagick \
     pcntl \
     mbstring \
     mcrypt \
