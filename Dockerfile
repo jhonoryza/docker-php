@@ -32,9 +32,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update -q \
     soap \
     xsl \
     zip \
-    sockets \
-    pdo_sqlsrv \
-    sqlsrv
+    sockets 
+    # pdo_sqlsrv \
+    # sqlsrv
 
 # Install composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
