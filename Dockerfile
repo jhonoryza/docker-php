@@ -26,6 +26,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update -q \
     opcache \
     pdo_mysql \
     pdo_pgsql \
+    pcntl \
     pgsql \
     redis \
     soap \
