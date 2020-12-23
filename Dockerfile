@@ -43,11 +43,13 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
     && php -r "unlink('composer-setup.php');"
 
-COPY ./php.ini /usr/local/etc/php/php.ini
+COPY ./php.ini.dev /usr/local/etc/php/php.ini
 
 RUN groupadd -g 1000 laravel 
 RUN useradd -ms /bin/bash -G laravel -g 1000 laravel 
 RUN mkdir -p /var/www/html \
-    && chown laravel:laravel /var/www/html
+    && mkdir -p /home/laravel/.composer \
+    && chown laravel:laravel /var/www/html \
+    && chown laravel:laravel /home/laravel/.composer
 
 WORKDIR /var/www/html
