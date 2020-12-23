@@ -48,8 +48,8 @@ COPY ./php.ini.dev /usr/local/etc/php/php.ini
 RUN groupadd -g 1000 laravel 
 RUN useradd -ms /bin/bash -G laravel -g 1000 laravel 
 RUN mkdir -p /var/www/html \
-    mkdir -p /home/laravel/.composer \
+    && mkdir -p /home/laravel/.composer \
     && chown laravel:laravel /var/www/html \
-    && chown -R laravel:laravel /home/laravel/.composer
+    && chown laravel:laravel /home/laravel/.composer
 
 WORKDIR /var/www/html
