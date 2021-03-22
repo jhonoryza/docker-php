@@ -1,5 +1,7 @@
 FROM php:7.4-fpm
 
+COPY qemu-arm-static /usr/bin
+
 ADD ./www.conf /usr/local/etc/php-fpm.d/www.conf
 
 # Download script to install PHP extensions and dependencies
