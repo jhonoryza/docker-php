@@ -1,9 +1,9 @@
-name: 'Build php docker image for 7.4 composer 2'
+name: 'Build php docker image for 7.4 horizon'
 
 on:
     push:
         branches:
-            - ubuntu-7.4-composer-2
+            - horizon-7.4
 
 jobs:
     release:
@@ -29,7 +29,7 @@ jobs:
             name: Build dockerfile (with push)
             run: |
                 docker buildx build \
-                --platform=linux/amd64,linux/arm/v7 \
+                --platform=linux/amd64 \
                 --output "type=image,push=true" \
                 --file ./Dockerfile . \
-                --tag jhonoryza/php:ubuntu-7.4-composer-2
+                --tag jhonoryza/php:horizon-7.4

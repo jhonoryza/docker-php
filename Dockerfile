@@ -40,6 +40,24 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
     && php -r "unlink('composer-setup.php');"
 
+# Install GD
+RUN apt-get install -y libfreetype-dev libjpeg8 libjpeg-turbo8-dev libwebp-dev libjpeg8-dev libpng-dev; \
+    docker-php-ext-configure gd --with-freetype --with-webp --with-jpeg; \
+    docker-php-ext-install -j$(nproc) gd
+
+# Install Zip
+RUN apt-get install -y libzip-dev && \
+    docker-php-ext-configure zip; \
+    docker-php-ext-install zip
+
+# Install PhpRedis package:
+RUN printf "\n" | pecl install -o -f redis \
+    &&  rm -rf /tmp/pear \
+    &&  docker-php-ext-enable redis
+
+# Install mariadb client
+RUN apt-get install -y mariadb-client
+
 COPY ./php.ini.dev /usr/local/etc/php/php.ini
 
 RUN groupadd -g 1000 laravel 
@@ -49,4 +67,13 @@ RUN mkdir -p /var/www/html \
     && chown laravel:laravel /var/www/html \
     && chown laravel:laravel /home/laravel/.composer
 
-WORKDIR /var/www/html
+RUN mkdir /etc/supervisord.d
+COPY .docker/laravel-horizon/php.ini /usr/local/etc/php/php.ini
+COPY .docker/laravel-horizon/supervisord.d/* /etc/supervisord.d/
+COPY .docker/laravel-horizon/supervisord.conf /etc/supervisord.conf
+
+ENTRYPOINT ["/usr/bin/supervisord", "-n", "-c",  "/etc/supervisord.conf"]
+
+RUN php -v | head -n 1 | grep -q "PHP ${PHP_VERSION}."
+
+WORKDIR /etc/supervisor/conf.d/
