@@ -6,7 +6,7 @@ on:
             - ubuntu-7.4-composer-2
 
 jobs:
-    release:
+    build-docker-image:
         runs-on: ubuntu-latest
         steps:
         -
@@ -24,12 +24,12 @@ jobs:
             id: buildx
             uses: crazy-max/ghaction-docker-buildx@v1
             with:
-                version: latest
+                buildx-version: latest
         -
             name: Build dockerfile (with push)
             run: |
                 docker buildx build \
-                --platform=linux/amd64,linux/arm/v7 \
+                --platform=linux/amd64 \
                 --output "type=image,push=true" \
                 --file ./Dockerfile . \
                 --tag jhonoryza/php:ubuntu-7.4-composer-2
