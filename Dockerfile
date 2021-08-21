@@ -1,5 +1,7 @@
 FROM php:7.4-fpm
 
+RUN apt-get update -y && apt-get install -y zlib1g-dev
+
 ADD ./www.conf /usr/local/etc/php-fpm.d/www.conf
 
 # Download script to install PHP extensions and dependencies
@@ -39,8 +41,6 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php -r "if (hash_file('SHA384', 'composer-setup.php') === trim(file_get_contents('signature'))) { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" \
     && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
     && php -r "unlink('composer-setup.php');"
-
-RUN apt-get install -y zlib1g-dev
 
 # Install GD
 RUN apt-get install -y libfreetype-dev libjpeg8 libjpeg-turbo8-dev libwebp-dev libjpeg8-dev libpng-dev; \
