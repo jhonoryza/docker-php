@@ -1,6 +1,6 @@
 FROM php:7.4-fpm
 
-RUN apt-get update -y && apt-get install -y zlib1g-dev libfreetype-dev libjpeg-dev libwebp-dev libpng-dev libzip-dev mariadb-client
+RUN apt-get update -y && apt-get install -y supervisor zlib1g-dev libfreetype-dev libjpeg-dev libwebp-dev libpng-dev libzip-dev mariadb-client
 
 ADD ./www.conf /usr/local/etc/php-fpm.d/www.conf
 
