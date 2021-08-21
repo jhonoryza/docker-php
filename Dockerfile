@@ -58,8 +58,10 @@ RUN printf "\n" | pecl install -o -f redis \
 # Install mariadb client
 RUN apt-get install -y mariadb-client
 
+# Create php.ini
 COPY ./php.ini.dev /usr/local/etc/php/php.ini
 
+# Create laravel user
 RUN groupadd -g 1000 laravel 
 RUN useradd -ms /bin/bash -G laravel -g 1000 laravel 
 RUN mkdir -p /var/www/html \
@@ -67,13 +69,11 @@ RUN mkdir -p /var/www/html \
     && chown laravel:laravel /var/www/html \
     && chown laravel:laravel /home/laravel/.composer
 
+# Configure supervisor horizon & scheduler
 RUN mkdir /etc/supervisord.d
-COPY .docker/laravel-horizon/php.ini /usr/local/etc/php/php.ini
-COPY .docker/laravel-horizon/supervisord.d/* /etc/supervisord.d/
-COPY .docker/laravel-horizon/supervisord.conf /etc/supervisord.conf
-
+COPY ./php.ini /usr/local/etc/php/php.ini
+COPY ./supervisord.d/* /etc/supervisord.d/
+COPY ./supervisord.conf /etc/supervisord.conf
 ENTRYPOINT ["/usr/bin/supervisord", "-n", "-c",  "/etc/supervisord.conf"]
-
-RUN php -v | head -n 1 | grep -q "PHP ${PHP_VERSION}."
 
 WORKDIR /etc/supervisor/conf.d/
