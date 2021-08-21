@@ -6,7 +6,7 @@ on:
             - horizon-7.4
 
 jobs:
-    release:
+    build-docker-image:
         runs-on: ubuntu-latest
         steps:
         -

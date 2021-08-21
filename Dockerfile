@@ -40,6 +40,8 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
     && php -r "unlink('composer-setup.php');"
 
+RUN apt-get install -y zlib1g-dev
+
 # Install GD
 RUN apt-get install -y libfreetype-dev libjpeg8 libjpeg-turbo8-dev libwebp-dev libjpeg8-dev libpng-dev; \
     docker-php-ext-configure gd --with-freetype --with-webp --with-jpeg; \
