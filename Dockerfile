@@ -1,6 +1,6 @@
 FROM php:7.4-fpm
 
-RUN apt-get update -y && apt-get install -y zlib1g-dev
+RUN apt-get update -y && apt-get install -y zlib1g-dev libfreetype-dev libjpeg8 libjpeg-turbo8-dev libwebp-dev libjpeg8-dev libpng-dev libzip-dev mariadb-client
 
 ADD ./www.conf /usr/local/etc/php-fpm.d/www.conf
 
@@ -43,22 +43,17 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php -r "unlink('composer-setup.php');"
 
 # Install GD
-RUN apt-get install -y libfreetype-dev libjpeg8 libjpeg-turbo8-dev libwebp-dev libjpeg8-dev libpng-dev; \
-    docker-php-ext-configure gd --with-freetype --with-webp --with-jpeg; \
+RUN docker-php-ext-configure gd --with-freetype --with-webp --with-jpeg; \
     docker-php-ext-install -j$(nproc) gd
 
 # Install Zip
-RUN apt-get install -y libzip-dev && \
-    docker-php-ext-configure zip; \
+RUN docker-php-ext-configure zip; \
     docker-php-ext-install zip
 
 # Install PhpRedis package:
 RUN printf "\n" | pecl install -o -f redis \
     &&  rm -rf /tmp/pear \
     &&  docker-php-ext-enable redis
-
-# Install mariadb client
-RUN apt-get install -y mariadb-client
 
 # Create php.ini
 COPY ./php.ini.dev /usr/local/etc/php/php.ini
