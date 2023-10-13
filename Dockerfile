@@ -1,10 +1,10 @@
-FROM serversideup/php:8.2-cli
+FROM serversideup/php:8.2-fpm-nginx
 
-# Install PHP Depedencies and postgres Extension
+# Install PHP Imagemagick using regular Ubuntu commands
 RUN apt-get update
 RUN apt-get install -y libaio1 libaio-dev build-essential php-pear php8.2-dev
 RUN apt-get install -y php8.2-pgsql php8.2-gd
-RUN apt-get install -y vim
+#RUN apt-get install -y build-essential zip libzip-dev libpq-dev postgresql postgresql-client
 
 # Download oracle packages and install OCI8
 ADD https://download.oracle.com/otn_software/linux/instantclient/1920000/instantclient-basic-linux.x64-19.20.0.0.0dbru.zip /tmp/
@@ -25,7 +25,7 @@ RUN ldconfig
 
 # install oracle php extension
 RUN echo 'instantclient,/opt/oracle/instantclient_19_20' | pecl install oci8
-RUN echo "extension=oci8.so" > /etc/php/8.2/cli/conf.d/oci8.ini
+RUN echo "extension=oci8.so" > /etc/php/8.2/fpm/conf.d/oci8.ini
 
 # clean apt cache
 RUN apt-get clean \
