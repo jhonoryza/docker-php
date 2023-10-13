@@ -1,52 +1,32 @@
-FROM php:7.4-fpm
+FROM serversideup/php:8.2-cli
 
-ADD ./www.conf /usr/local/etc/php-fpm.d/www.conf
+# Install PHP Depedencies and postgres Extension
+RUN apt-get update
+RUN apt-get install -y libaio1 libaio-dev build-essential php-pear php8.2-dev
+RUN apt-get install -y php8.2-pgsql php8.2-gd
+RUN apt-get install -y vim
 
-# Download script to install PHP extensions and dependencies
-ADD https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/master/install-php-extensions /usr/local/bin/
+# Download oracle packages and install OCI8
+ADD https://download.oracle.com/otn_software/linux/instantclient/1920000/instantclient-basic-linux.x64-19.20.0.0.0dbru.zip /tmp/
+ADD https://download.oracle.com/otn_software/linux/instantclient/1920000/instantclient-sdk-linux.x64-19.20.0.0.0dbru.zip /tmp/
+RUN mkdir /opt/oracle
+RUN unzip /tmp/instantclient-basic-linux.x64-19.20.0.0.0dbru.zip -d /opt/oracle/
+RUN unzip /tmp/instantclient-sdk-linux.x64-19.20.0.0.0dbru.zip -d /opt/oracle/
 
-RUN chmod uga+x /usr/local/bin/install-php-extensions && sync
+RUN ln -s /opt/oracle/instantclient_19_20/sdk/include/*.h /usr/local/include/
+RUN ln -s /opt/oracle/instantclient_19_20/*.dylib /usr/local/lib/
+RUN ln -s /opt/oracle/instantclient_19_20/*.dylib.19.1 /usr/local/lib/
+#RUN ln -s /usr/local/lib/libclntsh.dylib.19.1 /usr/local/lib/libclntsh.dylib
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update -q \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y \
-    curl \
-    git \
-    zip unzip \
-    vim \
-    && install-php-extensions \
-    bcmath \
-    bz2 \
-    calendar \
-    exif \
-    gd \
-    intl \
-    ldap \
-    memcached \
-    mysqli \
-    opcache \
-    pdo_mysql \
-    pdo_pgsql \
-    pcntl \
-    pgsql \
-    redis \
-    soap \
-    xsl \
-    zip
+RUN echo /opt/oracle/instantclient_19_20 > /etc/ld.so.conf.d/oracle-instantclient.conf
+RUN ldconfig
 
-# Install composer
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-    && php -r "copy('https://composer.github.io/installer.sig', 'signature');" \
-    && php -r "if (hash_file('SHA384', 'composer-setup.php') === trim(file_get_contents('signature'))) { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" \
-    && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
-    && php -r "unlink('composer-setup.php');"
+#ENV LD_LIBRARY_PATH /opt/oracle/instantclient_19_20
 
-COPY ./php.ini.dev /usr/local/etc/php/php.ini
+# install oracle php extension
+RUN echo 'instantclient,/opt/oracle/instantclient_19_20' | pecl install oci8
+RUN echo "extension=oci8.so" > /etc/php/8.2/cli/conf.d/oci8.ini
 
-RUN groupadd -g 1000 laravel 
-RUN useradd -ms /bin/bash -G laravel -g 1000 laravel 
-RUN mkdir -p /var/www/html \
-    && mkdir -p /home/laravel/.composer \
-    && chown laravel:laravel /var/www/html \
-    && chown laravel:laravel /home/laravel/.composer
-
-WORKDIR /var/www/html
+# clean apt cache
+RUN apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
