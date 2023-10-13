@@ -1,9 +1,9 @@
-name: 'Build php docker image for 7.4 composer 2'
+name: 'Build php docker image'
 
 on:
     push:
         branches:
-            - ubuntu-7.4-composer-2
+            - 8.2-oci8-cli
 
 jobs:
     build-docker-image:
@@ -32,4 +32,4 @@ jobs:
                 --platform=linux/amd64 \
                 --output "type=image,push=true" \
                 --file ./Dockerfile . \
-                --tag jhonoryza/php:ubuntu-7.4-composer-2
+                --tag jhonoryza/php:8.2-oci8
